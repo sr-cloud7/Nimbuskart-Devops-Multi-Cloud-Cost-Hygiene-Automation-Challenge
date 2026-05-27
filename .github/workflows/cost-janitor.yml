@@ -1,0 +1,88 @@
+name: Cost Janitor
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_ENDPOINT_URL: http://localhost:4566
+
+jobs:
+  cost-janitor:
+    runs-on: ubuntu-latest
+
+    services:
+      localstack:
+        image: localstack/localstack:3.8.0
+        ports:
+          - 4566:4566
+        env:
+          SERVICES: ec2,s3
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Install Python dependencies
+        run: pip install boto3 terraform-local moto pytest
+
+      - name: Wait for LocalStack
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4566/_localstack/health && echo "LocalStack ready" && break
+            echo "Attempt $i/30 — waiting 3s..."
+            sleep 3
+          done
+
+      - name: Terraform init and apply
+        run: |
+          cd terraform
+          tflocal init -input=false
+          tflocal apply -auto-approve -input=false
+
+      - name: Run Cost Janitor
+        id: janitor
+        continue-on-error: true
+        run: |
+          cd janitor
+          python3 janitor.py --dry-run
+
+      - name: Upload janitor report
+        uses: actions/upload-artifact@v4
+        with:
+          name: janitor-report-${{ github.run_id }}
+          path: |
+            janitor/report.json
+            janitor/summary.md
+
+      - name: Post summary as PR comment
+        if: steps.janitor.outcome == 'failure' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('janitor/summary.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+      - name: Fail if orphans found
+        if: steps.janitor.outcome == 'failure'
+        run: exit 1
