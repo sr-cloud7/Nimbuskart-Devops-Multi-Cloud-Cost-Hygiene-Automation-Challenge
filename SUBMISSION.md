@@ -1,7 +1,7 @@
 # Submission — DevOps Engineer Assignment
 
 **Candidate name:** Shivam
-**Email:** shivam@example.com
+**Email:** imshivam7890@gmail.com
 **Date submitted:** May 24, 2026
 **Hours spent (approximate):** 9
 
