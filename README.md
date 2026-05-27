@@ -45,5 +45,32 @@ If given one more week to work on this project, we would prioritize:
 
 - **AI tools used:** Gemini was used for code generation, test design structure, and workflow composition.
 - **AI correction:** The AI initially set `--dry-run` action to `store_true` with `default=False`, which contradicted the specifications requiring a `default=True`. This was identified during code review and manual specification comparison.
-- **Manual section:** The multi-cloud adapter design pattern and abstract base class specification were written manually without AI assistance.
+- **Manual section:** The multi-cloud adapter design pattern and abstract base class specification were written manually without AI assistance:
+
+```python
+from abc import ABC, abstractmethod
+from typing import Dict, List, Set
+
+class CloudProvider(ABC):
+    @abstractmethod
+    def list_unattached_disks(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def list_idle_compute(self, days: int) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def list_unused_ips(self) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def list_missing_tags(self, required: Set[str]) -> List[Dict]:
+        pass
+
+    @abstractmethod
+    def delete_resource(self, resource_id: str) -> bool:
+        pass
+```
+
 
