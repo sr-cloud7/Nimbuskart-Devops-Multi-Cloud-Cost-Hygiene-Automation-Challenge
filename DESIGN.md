@@ -44,7 +44,7 @@ Adding a new provider like GCP is simple: implement `GCPProvider` inheriting fro
 
 ## IAM permissions
 
-The NimbusKart Cost Janitor follows the principle of least privilege. 
+The NimbusKart Cost Janitor follows the principle of least privilege.
 
 Below is the minimal IAM policy required for read-only scan mode:
 ```json

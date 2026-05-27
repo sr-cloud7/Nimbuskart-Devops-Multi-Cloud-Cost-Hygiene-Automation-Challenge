@@ -1,5 +1,7 @@
 # Cost Janitor Report
 
+*Note: This is a sample output report generated for demonstration.*
+
 **Orphans found:** 3
 
 **Estimated monthly waste:** $12.84

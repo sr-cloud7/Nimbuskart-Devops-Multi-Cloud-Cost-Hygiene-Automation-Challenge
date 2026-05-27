@@ -1,3 +1,7 @@
+"""
+NimbusKart Cost Janitor
+Scans cloud environment for orphan resources and generates cost reports.
+"""
 import argparse
 import datetime
 import json

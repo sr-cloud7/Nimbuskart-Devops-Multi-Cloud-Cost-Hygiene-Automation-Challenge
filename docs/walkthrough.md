@@ -41,7 +41,7 @@ This provisions:
 ### 4. Run the Cost Janitor
 Execute the janitor script pointing to the LocalStack endpoint:
 ```bash
-AWS_ENDPOINT_URL=http://localhost:4566 python janitor/janitor.py --dry-run
+AWS_ENDPOINT_URL=http://localhost:4566 python3 janitor/janitor.py --dry-run
 ```
 Since the janitor will identify the unattached EBS volume as an orphan resource, it will write `report.json` and `summary.md` and exit with status code `1` (indicating orphans were found, which is expected in dry-run mode).
 

@@ -1,3 +1,4 @@
+# NimbusKart Cost Janitor Constants
 # Source: https://aws.amazon.com/ebs/pricing/ (us-east-1, 2026)
 EBS_GP3_PER_GB_MONTH   = 0.08
 
