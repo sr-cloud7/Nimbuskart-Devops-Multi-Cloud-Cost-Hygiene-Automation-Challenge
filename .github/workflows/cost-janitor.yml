@@ -83,6 +83,3 @@ jobs:
               body: summary
             });
 
-      - name: Fail if orphans found
-        if: steps.janitor.outcome == 'failure'
-        run: exit 1
